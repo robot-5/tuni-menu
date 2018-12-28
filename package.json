@@ -1,0 +1,19 @@
+{
+  "name": "tuni-menu",
+  "version": "1.0.0",
+  "description": "Collects information about the daily menues of Tampere3",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/robot-5/tuni-menu.git"
+  },
+  "keywords": [],
+  "author": "Philipp Johag",
+  "license": "ISC",
+  "engines": {
+    "node": "10.15.0"
+  }
+}
