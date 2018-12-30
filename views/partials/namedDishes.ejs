@@ -1,0 +1,25 @@
+<!-- creates table for a menu with named dishes  -->
+<table class="table">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Ingredients</th>
+    </tr>
+  </thead>
+  <tbody>
+      <% menu.forEach(function(menuItem) { %>
+          <tr>
+            <td><%= menuItem[0] %></td>
+            <td>
+                <% if (menuItem[1].length == 0) { %>
+                    <p><em>No information</em></p>
+                 <% } else { %>
+                <% menuItem[1].forEach(function(ingredient) { %>
+                    <p><%= ingredient %></p>
+                <% }); %>
+                <% } %>
+            </td>
+          </tr>
+      <% }); %>
+  </tbody>
+</table>

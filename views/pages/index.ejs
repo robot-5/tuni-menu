@@ -5,7 +5,10 @@
 </head>
 
 <body>
-    <h1>Tuni Menu</h1>
-Food details will be displayed here.
+    <h1>Tuni Menu - <%= today %></h1>
+
+<h2>Reaktori</h2>
+<%- include('../partials/namedDishes.ejs', {'menu': reaktoriMenu}) %>
+
 </body>
 </html>
