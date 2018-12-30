@@ -1,4 +1,9 @@
 <!-- creates table for a menu with named dishes  -->
+
+<% if (menu.length == 0) { %>
+    <p>No food today!</p>
+<% } else { %>
+
 <table class="table">
   <thead>
     <tr>
@@ -7,6 +12,7 @@
     </tr>
   </thead>
   <tbody>
+
       <% menu.forEach(function(menuItem) { %>
           <tr>
             <td><%= menuItem[0] %></td>
@@ -23,3 +29,4 @@
       <% }); %>
   </tbody>
 </table>
+<% }%>

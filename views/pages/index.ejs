@@ -1,14 +1,19 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-  <% include ../partials/header.ejs %>
+    <% include ../partials/header.ejs %>
 </head>
 
 <body>
     <h1>Tuni Menu - <%= today %></h1>
 
-<h2>Reaktori</h2>
-<%- include('../partials/namedDishes.ejs', {'menu': reaktoriMenu}) %>
+    <h2>Reaktori</h2>
+    <%- include('../partials/namedDishes.ejs', {'menu': reaktoriMenu}) %>
+
+    <h2>Hertsi</h2>
+    <%- include('../partials/namedDishes.ejs', {'menu': hertsiMenu}) %>
 
 </body>
+
 </html>

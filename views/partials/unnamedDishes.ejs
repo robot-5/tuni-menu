@@ -1,0 +1,24 @@
+<!-- creates table for a menu with unnamed dishes  -->
+
+
+<!-- creates table for a menu with named dishes  -->
+
+<% if (menu.length == 0) { %>
+    <p>No food today!</p>
+<% } else { %>
+
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Dishes</th>
+        </tr>
+      </thead>
+      <tbody>
+          <% menu.forEach(function(menuItem) { %>
+              <tr>
+                <td><p><%= menuItem %></p></td>
+              </tr>
+          <% }); %>
+      </tbody>
+    </table>
+<% }%>
