@@ -2,14 +2,15 @@ const express = require('express');
 const path = require('path');
 const PORT = process.env.PORT || 5000;
 const async = require('async');
-const menus = require('./menus')
+const menus = require('./menus');
+const menu_urls = require('./menu_urls');
 
 // get information on the different menus and render index page
 function displayIndex(req, res) {
 
     // TODO generate current urls of mensas
-    const reaktoriUrl = 'https://www.fazerfoodco.fi/modules/json/json/Index?costNumber=0812&language=en';
-    const hertsiUrl = 'https://www.sodexo.fi/ruokalistat/output/daily_json/12812/2018/12/11/en';
+    const reaktoriUrl = menu_urls.getReaktoriUrl();
+    const hertsiUrl = menu_urls.getHertsiUrl();
 
     let tasks = {
             reaktoriMenu : function(callback){menus.getReaktoriMenu(reaktoriUrl, callback);},
