@@ -1,5 +1,7 @@
 const request = require('request');
-const htmlparser = require('htmlparser');
+const async = require('async');
+const menu_urls = require('./menu_urls');
+// const htmlparser = require('htmlparser');
 
 // return dish object with given parameters
 function dish(name, ingredients, price) {
@@ -53,10 +55,28 @@ function getHertsiMenu(url, callback) {
     request(url, {json: true}, request_callback);
 }
 
+// get information on the different menus and output via 'done' function
+// done must take two parameters err and results
+function getAllMenus(req, res, done) {
+    const reaktoriUrl = menu_urls.getReaktoriUrl();
+    const hertsiUrl = menu_urls.getHertsiUrl();
+
+    let tasks = {
+            reaktoriMenu : function(callback){getReaktoriMenu(reaktoriUrl, callback);},
+            hertsiMenu : function(callback){getHertsiMenu(hertsiUrl, callback);},
+            today : function(callback) {callback(null, (new Date()).toDateString());},
+        };
+
+     // getting data and then rendering page
+     // TODO use async.reflect
+    async.parallel(tasks,done);
+}
+
 
 
 var menuGetters = {
     getReaktoriMenu: getReaktoriMenu,
-    getHertsiMenu: getHertsiMenu
+    getHertsiMenu: getHertsiMenu,
+    getAllMenus: getAllMenus,
 };
 module.exports = menuGetters;
