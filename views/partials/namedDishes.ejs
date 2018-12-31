@@ -9,22 +9,21 @@
     <tr>
       <th>Name</th>
       <th>Ingredients</th>
+      <th>Price</th>
     </tr>
   </thead>
   <tbody>
 
-      <% menu.forEach(function(menuItem) { %>
+      <% menu.forEach(function(dish) { %>
           <tr>
-            <td><%= menuItem[0] %></td>
+            <td><%= dish.name %></td>
             <td>
-                <% if (menuItem[1].length == 0) { %>
-                    <p><em>No information</em></p>
-                 <% } else { %>
-                <% menuItem[1].forEach(function(ingredient) { %>
+                <% dish.ingredients.forEach(function(ingredient) { %>
                     <p><%= ingredient %></p>
                 <% }); %>
-                <% } %>
+
             </td>
+            <td><%= dish.price %></td>
           </tr>
       <% }); %>
   </tbody>

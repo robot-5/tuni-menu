@@ -7,8 +7,6 @@ const menu_urls = require('./menu_urls');
 
 // get information on the different menus and render index page
 function displayIndex(req, res) {
-
-    // TODO generate current urls of mensas
     const reaktoriUrl = menu_urls.getReaktoriUrl();
     const hertsiUrl = menu_urls.getHertsiUrl();
 
