@@ -8,11 +8,25 @@
 <body>
     <h1>Tuni Menu - <%= today %></h1>
 
-    <h2>Reaktori</h2>
-    <%- include('../partials/namedDishes.ejs', {'menu': reaktoriMenu}) %>
+    <div class="tampere-campus">
+        <h2>Tampere Campus</h2>
+        <h3>Minerva</h3>
+        <%- include('../partials/namedDishes.ejs', {'menu': minervaMenu}) %>
 
-    <h2>Hertsi</h2>
-    <%- include('../partials/namedDishes.ejs', {'menu': hertsiMenu}) %>
+        <h3>Juvenes Yliopiston Ravintola</h3>
+        <%- include('../partials/namedDishes.ejs', {'menu': yoRavintolaMenu}) %>
+    </div>
+
+    <div class="hervanta-campus">
+        <h2>Hervanta Campus</h2>
+        <h3>Reaktori</h3>
+        <%- include('../partials/namedDishes.ejs', {'menu': reaktoriMenu}) %>
+
+        <h3>Hertsi</h3>
+        <%- include('../partials/namedDishes.ejs', {'menu': hertsiMenu}) %>
+    </div>
+
+
 
 </body>
 

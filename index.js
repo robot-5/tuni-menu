@@ -16,6 +16,7 @@ function allMenusHtml(req, res) {
 function allMenusJson(req, res) {
 
      let done = function(err, results) {
+         console.log(results);
          res.json(results);
      };
      menus.getAllMenus(req,res,done);
