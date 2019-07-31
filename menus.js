@@ -15,7 +15,7 @@ function dish(name, ingredients, price) {
 // get menu of a restaurant and parse it with given parser
 function getMenu(url, callback, parseMenu) {
     //callback for request for menu
-    request_callback = (error, response, body) => {
+    let request_callback = (error, response, body) => {
         if (error) {
             console.log(error);
             callback(error, null);
