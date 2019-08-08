@@ -1,10 +1,10 @@
 <!-- creates table for a menu with named dishes  -->
 
 <% if (menu.length == 0) { %>
-    <p>No food today!</p>
+<p>No food today!</p>
 <% } else { %>
 
-<table class="table">
+<table class="table table-dark">
   <thead>
     <tr>
       <th>Name</th>
@@ -14,18 +14,18 @@
   </thead>
   <tbody>
 
-      <% menu.forEach(function(dish) { %>
-          <tr>
-            <td><%= dish.name %></td>
-            <td>
-                <% dish.ingredients.forEach(function(ingredient) { %>
-                    <p><%= ingredient %></p>
-                <% }); %>
+    <% menu.forEach(function(dish) { %>
+    <tr>
+      <td><%= dish.name %></td>
+      <td>
+        <% dish.ingredients.forEach(function(ingredient) { %>
+        <p><%= ingredient %></p>
+        <% }); %>
 
-            </td>
-            <td><%= dish.price %></td>
-          </tr>
-      <% }); %>
+      </td>
+      <td><%= dish.price %></td>
+    </tr>
+    <% }); %>
   </tbody>
 </table>
 <% }%>
