@@ -1,7 +1,10 @@
 const request_promise_native = require('request-promise-native');
 const menu_urls = require('./menu_urls');
+const parseXml = require('xml2js').parseString;
+
 
 // return dish object with given parameters
+//name and price should be string, ingredients should be array of strings
 function dish(name, ingredients, price) {
     return {
         name: name,
@@ -13,13 +16,14 @@ function dish(name, ingredients, price) {
 // get menu of a restaurant and parse it with given parser
 function getMenu(url, parseMenu) {
 
-    return request_promise_native({ uri: url, json: true })
+    return request_promise_native({ uri: url })
         .then(parseMenu)
         .catch((err) => console.log('error getting menu: ', err));
 }
 
 
 function parseReaktoriMenu(response_body) {
+    response_body = JSON.parse(response_body);
     let reaktoriMenu = [];
 
     // response_body.MenusForDays[0] contains menu for current day
@@ -28,13 +32,14 @@ function parseReaktoriMenu(response_body) {
     }
 
     for (let i = 0; i < response_body.MenusForDays[0].SetMenus.length; i++) {
-        let curr_dish = response_body.MenusForDays[0].SetMenus[i];
-        reaktoriMenu.push(dish(curr_dish.Name, curr_dish.Components, curr_dish.Price));
+        let setMenu = response_body.MenusForDays[0].SetMenus[i];
+        reaktoriMenu.push(dish(setMenu.Name, setMenu.Components, setMenu.Price));
     }
     return reaktoriMenu;
 }
 
 function parseHertsiMenu(response_body) {
+    response_body = JSON.parse(response_body);
     let hertsiMenu = [];
 
     if (!response_body.hasOwnProperty('courses')) {
@@ -42,19 +47,33 @@ function parseHertsiMenu(response_body) {
     }
 
     for (let i = 0; i < response_body.courses.length; i++) {
-        let curr_dish = response_body.courses[i];
-        hertsiMenu.push(dish(curr_dish.category, [curr_dish.title_en], curr_dish.price));
+        let course = response_body.courses[i];
+        hertsiMenu.push(dish(course.category, [course.title_en], course.price));
     }
     return hertsiMenu;
 }
 
 function parseYoRavintolaMenu(response_body) {
-    let yoRavintolaMenu = [];
-    // TODO parse JSON
-    if (!response_body || !response_body.hasOwnProperty('MealOptions')) {
-        return yoRavintolaMenu;
-    }
 
+    //the API returns JSON wrapped in XML...
+    parseXml(response_body, (err, result) => {
+        if (err) {
+            console.log(err);
+        } else {
+            response_body = JSON.parse(result.string._);
+        }
+    });
+
+    let yoRavintolaMenu = [];
+    if (!response_body || !response_body.hasOwnProperty('MealOptions')) {
+        return yoRavintolaMenu;    }
+
+    for (let mealOption of response_body.MealOptions) {
+
+        let ingredients = mealOption.MenuItems.map(m => m.Name_EN);
+        //the API reports wrong prices (compared to offical page), set price to null (for now)
+        yoRavintolaMenu.push(dish(mealOption.Name_EN, ingredients, null));
+    }
     return yoRavintolaMenu;
 }
 
@@ -79,8 +98,7 @@ function getYoRavintolaMenu(url) {
     return getMenu(url, parseYoRavintolaMenu);
 }
 
-// get information on the different menus and output via 'done' function
-// done must take two parameters err and results
+// get and return information on the different menus
 function getAllMenus() {
     const minervaUrl = menu_urls.getMinervaUrl();
     const reaktoriUrl = menu_urls.getReaktoriUrl();
@@ -89,14 +107,13 @@ function getAllMenus() {
 
     //turns array of menus into object of menus
     function assembleMenus(arr) {
-        let results = {
+        return {
             today: (new Date()).toDateString(),
+            yoRavintolaMenu: arr[0],
+            minervaMenu: arr[1],
+            reaktoriMenu: arr[2],
+            hertsiMenu: arr[3],
         };
-        results.yoRavintolaMenu = arr[0];
-        results.minervaMenu = arr[1];
-        results.reaktoriMenu = arr[2];
-        results.hertsiMenu = arr[3];
-        return results;
     }
 
     return Promise.all(
