@@ -26,7 +26,7 @@ function getMenu(url, callback, parseMenu) {
     };
 
     //send request, process response
-    request(url, {json: true}, request_callback);
+    request(url, { json: true }, request_callback);
 }
 
 
@@ -34,7 +34,7 @@ function parseReaktoriMenu(response_body) {
     let reaktoriMenu = [];
 
     // response_body.MenusForDays[0] contains menu for current day
-    if (response_body.MenusForDays.length === 0 || ! response_body.MenusForDays[0].hasOwnProperty('SetMenus')) {
+    if (response_body.MenusForDays.length === 0 || !response_body.MenusForDays[0].hasOwnProperty('SetMenus')) {
         return reaktoriMenu;
     }
 
@@ -48,13 +48,13 @@ function parseReaktoriMenu(response_body) {
 function parseHertsiMenu(response_body) {
     let hertsiMenu = [];
 
-    if (! response_body.hasOwnProperty('courses')) {
+    if (!response_body.hasOwnProperty('courses')) {
         return reaktoriMenu;
     }
 
     for (let i = 0; i < response_body.courses.length; i++) {
         let curr_dish = response_body.courses[i];
-        hertsiMenu.push(dish(curr_dish.category,[curr_dish.title_en], curr_dish.price));
+        hertsiMenu.push(dish(curr_dish.category, [curr_dish.title_en], curr_dish.price));
     }
     return hertsiMenu;
 }
@@ -62,7 +62,7 @@ function parseHertsiMenu(response_body) {
 function parseYoRavintolaMenu(response_body) {
     let yoRavintolaMenu = [];
     // TODO parse JSON
-    if (! response_body.hasOwnProperty('MealOptions')) {
+    if (!response_body.hasOwnProperty('MealOptions')) {
         return yoRavintolaMenu;
     }
 
@@ -72,22 +72,22 @@ function parseYoRavintolaMenu(response_body) {
 // get menu of restaurant Minerva on Tampere Campus
 function getMinervaMenu(url, callback) {
     //using parser of Reaktori since both have same JSON structure
-    getMenu(url,callback,parseReaktoriMenu);
+    getMenu(url, callback, parseReaktoriMenu);
 }
 
 // get menu of restaurant Reaktori on Hervanta Campus
 function getReaktoriMenu(url, callback) {
-    getMenu(url,callback,parseReaktoriMenu);
+    getMenu(url, callback, parseReaktoriMenu);
 }
 
 // get menu of restaurant Hertsi on Hervanta Campus
 function getHertsiMenu(url, callback) {
-    getMenu(url,callback,parseHertsiMenu);
+    getMenu(url, callback, parseHertsiMenu);
 }
 
 // get menu of restaurant Juvenes Yliopiston Ravintola on Tampere Campus
 function getYoRavintolaMenu(url, callback) {
-    getMenu(url,callback,parseYoRavintolaMenu);
+    getMenu(url, callback, parseYoRavintolaMenu);
 }
 
 // get information on the different menus and output via 'done' function
@@ -100,25 +100,23 @@ function getAllMenus(req, res, done) {
 
 
     let tasks = {
-            //Tampere campus
-            yoRavintolaMenu : function(callback){getYoRavintolaMenu(yoRavintolaUrl, callback);},
-            minervaMenu : function(callback){getMinervaMenu(minervaUrl, callback);},
-            //Hervanta Campus
-            reaktoriMenu : function(callback){getReaktoriMenu(reaktoriUrl, callback);},
-            hertsiMenu : function(callback){getHertsiMenu(hertsiUrl, callback);},
-            //current date as string
-            today : function(callback) {callback(null, (new Date()).toDateString());},
-        };
+        //Tampere campus
+        yoRavintolaMenu: function (callback) { getYoRavintolaMenu(yoRavintolaUrl, callback); },
+        minervaMenu: function (callback) { getMinervaMenu(minervaUrl, callback); },
+        //Hervanta Campus
+        reaktoriMenu: function (callback) { getReaktoriMenu(reaktoriUrl, callback); },
+        hertsiMenu: function (callback) { getHertsiMenu(hertsiUrl, callback); },
+        //current date as string
+        today: function (callback) { callback(null, (new Date()).toDateString()); },
+    };
 
-     // getting data and then rendering page
-     // TODO use async.reflect
-    async.parallel(tasks,done);
+    // getting data and then rendering page
+    // TODO use async.reflect
+    async.parallel(tasks, done);
 }
 
-
-
-var menuGetters = {
-    getYoRavintolaMenu : getYoRavintolaMenu,
+const menuGetters = {
+    getYoRavintolaMenu: getYoRavintolaMenu,
     getMinervaMenu: getMinervaMenu,
     getReaktoriMenu: getReaktoriMenu,
     getHertsiMenu: getHertsiMenu,

@@ -14,7 +14,7 @@ function getReaktoriUrl() {
 // get Hertsi URL for current day
 function getHertsiUrl() {
     const today = new Date();
-    const dateString = today.getFullYear() + '/' + (today.getMonth()+1) + '/' + today.getDate();
+    const dateString = today.getFullYear() + '/' + (today.getMonth() + 1) + '/' + today.getDate();
     return 'https://www.sodexo.fi/ruokalistat/output/daily_json/12812/' + dateString + '/en';
 }
 
@@ -24,14 +24,14 @@ function getYoRavintolaUrl() {
     const baseUrl = 'http://www.juvenes.fi/DesktopModules/Talents.LunchMenu/LunchMenuServices.asmx/GetMenuByDate?';
     const kitchenID = 'KitchenId=13';
     const menuTypeId = 'MenuTypeId=60';
-    const dateString = 'Date=' + [today.getDate(),today.getMonth() + 1,today.getFullYear()].join('/');
+    const dateString = 'Date=' + [today.getDate(), today.getMonth() + 1, today.getFullYear()].join('/');
     const lang = 'lang=en';
-    const query = [kitchenID,menuTypeId,dateString,lang].join('&')
+    const query = [kitchenID, menuTypeId, dateString, lang].join('&')
     return baseUrl + query;
 }
 
 
-var urlGetters = {
+const urlGetters = {
     getReaktoriUrl: getReaktoriUrl,
     getHertsiUrl: getHertsiUrl,
     getMinervaUrl: getMinervaUrl,
