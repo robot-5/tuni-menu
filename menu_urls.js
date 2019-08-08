@@ -26,7 +26,7 @@ function getYoRavintolaUrl() {
     const menuTypeId = 'MenuTypeId=60';
     const dateString = 'Date=' + [today.getDate(), today.getMonth() + 1, today.getFullYear()].join('/');
     const lang = 'lang=en';
-    const query = [kitchenID, menuTypeId, dateString, lang].join('&')
+    const query = [kitchenID, menuTypeId, dateString, lang].join('&');
     return baseUrl + query;
 }
 

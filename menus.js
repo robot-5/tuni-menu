@@ -1,7 +1,5 @@
-const request = require('request');
-const async = require('async');
+const request_promise_native = require('request-promise-native');
 const menu_urls = require('./menu_urls');
-const htmlparser = require('htmlparser');
 
 // return dish object with given parameters
 function dish(name, ingredients, price) {
@@ -13,20 +11,11 @@ function dish(name, ingredients, price) {
 }
 
 // get menu of a restaurant and parse it with given parser
-function getMenu(url, callback, parseMenu) {
-    //callback for request for menu
-    let request_callback = (error, response, body) => {
-        if (error) {
-            console.log(error);
-            callback(error, null);
-        } else {
-            //final callback
-            callback(null, parseMenu(body));
-        }
-    };
+function getMenu(url, parseMenu) {
 
-    //send request, process response
-    request(url, { json: true }, request_callback);
+    return request_promise_native({ uri: url, json: true })
+        .then(parseMenu)
+        .catch((err) => console.log('error getting menu: ', err));
 }
 
 
@@ -34,7 +23,7 @@ function parseReaktoriMenu(response_body) {
     let reaktoriMenu = [];
 
     // response_body.MenusForDays[0] contains menu for current day
-    if (response_body.MenusForDays.length === 0 || !response_body.MenusForDays[0].hasOwnProperty('SetMenus')) {
+    if (!response_body || !response_body.hasOwnProperty('MenusForDays') || response_body.MenusForDays.length === 0 || !response_body.MenusForDays[0].hasOwnProperty('SetMenus')) {
         return reaktoriMenu;
     }
 
@@ -49,7 +38,7 @@ function parseHertsiMenu(response_body) {
     let hertsiMenu = [];
 
     if (!response_body.hasOwnProperty('courses')) {
-        return reaktoriMenu;
+        return hertsiMenu;
     }
 
     for (let i = 0; i < response_body.courses.length; i++) {
@@ -62,7 +51,7 @@ function parseHertsiMenu(response_body) {
 function parseYoRavintolaMenu(response_body) {
     let yoRavintolaMenu = [];
     // TODO parse JSON
-    if (!response_body.hasOwnProperty('MealOptions')) {
+    if (!response_body || !response_body.hasOwnProperty('MealOptions')) {
         return yoRavintolaMenu;
     }
 
@@ -70,49 +59,54 @@ function parseYoRavintolaMenu(response_body) {
 }
 
 // get menu of restaurant Minerva on Tampere Campus
-function getMinervaMenu(url, callback) {
+function getMinervaMenu(url) {
     //using parser of Reaktori since both have same JSON structure
-    getMenu(url, callback, parseReaktoriMenu);
+    return getMenu(url, parseReaktoriMenu);
 }
 
 // get menu of restaurant Reaktori on Hervanta Campus
-function getReaktoriMenu(url, callback) {
-    getMenu(url, callback, parseReaktoriMenu);
+function getReaktoriMenu(url) {
+    return getMenu(url, parseReaktoriMenu);
 }
 
 // get menu of restaurant Hertsi on Hervanta Campus
-function getHertsiMenu(url, callback) {
-    getMenu(url, callback, parseHertsiMenu);
+function getHertsiMenu(url) {
+    return getMenu(url, parseHertsiMenu);
 }
 
 // get menu of restaurant Juvenes Yliopiston Ravintola on Tampere Campus
-function getYoRavintolaMenu(url, callback) {
-    getMenu(url, callback, parseYoRavintolaMenu);
+function getYoRavintolaMenu(url) {
+    return getMenu(url, parseYoRavintolaMenu);
 }
 
 // get information on the different menus and output via 'done' function
 // done must take two parameters err and results
-function getAllMenus(req, res, done) {
+function getAllMenus() {
     const minervaUrl = menu_urls.getMinervaUrl();
     const reaktoriUrl = menu_urls.getReaktoriUrl();
     const hertsiUrl = menu_urls.getHertsiUrl();
     const yoRavintolaUrl = menu_urls.getYoRavintolaUrl();
 
+    //turns array of menus into object of menus
+    function assembleMenus(arr) {
+        let results = {
+            today: (new Date()).toDateString(),
+        };
+        results.yoRavintolaMenu = arr[0];
+        results.minervaMenu = arr[1];
+        results.reaktoriMenu = arr[2];
+        results.hertsiMenu = arr[3];
+        return results;
+    }
 
-    let tasks = {
-        //Tampere campus
-        yoRavintolaMenu: function (callback) { getYoRavintolaMenu(yoRavintolaUrl, callback); },
-        minervaMenu: function (callback) { getMinervaMenu(minervaUrl, callback); },
-        //Hervanta Campus
-        reaktoriMenu: function (callback) { getReaktoriMenu(reaktoriUrl, callback); },
-        hertsiMenu: function (callback) { getHertsiMenu(hertsiUrl, callback); },
-        //current date as string
-        today: function (callback) { callback(null, (new Date()).toDateString()); },
-    };
-
-    // getting data and then rendering page
-    // TODO use async.reflect
-    async.parallel(tasks, done);
+    return Promise.all(
+        [getYoRavintolaMenu(yoRavintolaUrl),
+        getMinervaMenu(minervaUrl),
+        getReaktoriMenu(reaktoriUrl),
+        getHertsiMenu(hertsiUrl)
+        ])
+        .then(assembleMenus)
+        .catch(error => console.log('error while waiting for all menus: ', error));
 }
 
 const menuGetters = {
