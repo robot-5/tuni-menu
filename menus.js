@@ -1,5 +1,4 @@
 const request_promise_native = require('request-promise-native');
-const menu_urls = require('./menu_urls');
 const parseXml = require('xml2js').parseString;
 
 
@@ -66,7 +65,8 @@ function parseYoRavintolaMenu(response_body) {
 
     let yoRavintolaMenu = [];
     if (!response_body || !response_body.hasOwnProperty('MealOptions')) {
-        return yoRavintolaMenu;    }
+        return yoRavintolaMenu;
+    }
 
     for (let mealOption of response_body.MealOptions) {
 
@@ -78,33 +78,38 @@ function parseYoRavintolaMenu(response_body) {
 }
 
 // get menu of restaurant Minerva on Tampere Campus
-function getMinervaMenu(url) {
+function getMinervaMenu() {
+    let url = 'https://www.fazerfoodco.fi/modules/json/json/Index?costNumber=0815&language=en';
     //using parser of Reaktori since both have same JSON structure
     return getMenu(url, parseReaktoriMenu);
 }
 
 // get menu of restaurant Reaktori on Hervanta Campus
-function getReaktoriMenu(url) {
+function getReaktoriMenu() {
+    let url = 'https://www.fazerfoodco.fi/modules/json/json/Index?costNumber=0812&language=en';
     return getMenu(url, parseReaktoriMenu);
 }
 
 // get menu of restaurant Hertsi on Hervanta Campus
-function getHertsiMenu(url) {
+function getHertsiMenu() {
+    let today = new Date();
+    let dateString = `${today.getFullYear()}/${today.getMonth() + 1}/${today.getDate()}`;
+    let url = `https://www.sodexo.fi/ruokalistat/output/daily_json/12812/${dateString}/en`;
     return getMenu(url, parseHertsiMenu);
 }
 
 // get menu of restaurant Juvenes Yliopiston Ravintola on Tampere Campus
-function getYoRavintolaMenu(url) {
+function getYoRavintolaMenu() {
+
+    const today = new Date();
+    let url = 'http://www.juvenes.fi/DesktopModules/Talents.LunchMenu/LunchMenuServices.asmx/GetMenuByDate?';
+    let query = `KitchenId=13&MenuTypeId=60&Date=${today.getDate()}/${today.getMonth() + 1}/${today.getFullYear()}&lang=en`;
+    url += query;
     return getMenu(url, parseYoRavintolaMenu);
 }
 
 // get and return information on the different menus
 function getAllMenus() {
-    const minervaUrl = menu_urls.getMinervaUrl();
-    const reaktoriUrl = menu_urls.getReaktoriUrl();
-    const hertsiUrl = menu_urls.getHertsiUrl();
-    const yoRavintolaUrl = menu_urls.getYoRavintolaUrl();
-
     //turns array of menus into object of menus
     function assembleMenus(arr) {
         return {
@@ -117,10 +122,10 @@ function getAllMenus() {
     }
 
     return Promise.all(
-        [getYoRavintolaMenu(yoRavintolaUrl),
-        getMinervaMenu(minervaUrl),
-        getReaktoriMenu(reaktoriUrl),
-        getHertsiMenu(hertsiUrl)
+        [getYoRavintolaMenu(),
+        getMinervaMenu(),
+        getReaktoriMenu(),
+        getHertsiMenu()
         ])
         .then(assembleMenus)
         .catch(error => console.log('error while waiting for all menus: ', error));
