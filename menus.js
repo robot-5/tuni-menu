@@ -69,11 +69,16 @@ function parseYoRavintolaMenu(response_body) {
     }
 
     for (let mealOption of response_body.MealOptions) {
+        
+        if (mealOption.Name == "[CLOSED]") {
+            continue;
+        }
 
         let ingredients = mealOption.MenuItems.map(m => m.Name_EN);
         //the API reports wrong prices (compared to offical page), set price to null (for now)
         yoRavintolaMenu.push(dish(mealOption.Name_EN, ingredients, null));
     }
+    console.log(yoRavintolaMenu);
     return yoRavintolaMenu;
 }
 
@@ -105,6 +110,7 @@ function getYoRavintolaMenu() {
     let url = 'http://www.juvenes.fi/DesktopModules/Talents.LunchMenu/LunchMenuServices.asmx/GetMenuByDate?';
     let query = `KitchenId=13&MenuTypeId=60&Date=${today.getDate()}/${today.getMonth() + 1}/${today.getFullYear()}&lang=en`;
     url += query;
+    console.log(url);
     return getMenu(url, parseYoRavintolaMenu);
 }
 
@@ -131,11 +137,10 @@ function getAllMenus() {
         .catch(error => console.log('error while waiting for all menus: ', error));
 }
 
-const menuGetters = {
+module.exports  = {
     getYoRavintolaMenu: getYoRavintolaMenu,
     getMinervaMenu: getMinervaMenu,
     getReaktoriMenu: getReaktoriMenu,
     getHertsiMenu: getHertsiMenu,
     getAllMenus: getAllMenus,
 };
-module.exports = menuGetters;
