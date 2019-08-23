@@ -77,8 +77,7 @@ function parseYoRavintolaMenu(response_body) {
         let ingredients = mealOption.MenuItems.map(m => m.Name_EN);
         //the API reports wrong prices (compared to offical page), set price to null (for now)
         yoRavintolaMenu.push(dish(mealOption.Name_EN, ingredients, null));
-    }
-    console.log(yoRavintolaMenu);
+    }    
     return yoRavintolaMenu;
 }
 
@@ -110,7 +109,6 @@ function getYoRavintolaMenu() {
     let url = 'http://www.juvenes.fi/DesktopModules/Talents.LunchMenu/LunchMenuServices.asmx/GetMenuByDate?';
     let query = `KitchenId=13&MenuTypeId=60&Date=${today.getDate()}/${today.getMonth() + 1}/${today.getFullYear()}&lang=en`;
     url += query;
-    console.log(url);
     return getMenu(url, parseYoRavintolaMenu);
 }
 
